@@ -11,7 +11,7 @@ app.use(express.json());
 //middleware for handling cors policy 
 app.use(
     cors({
-      origin:'http://localhost:5173',
+      origin:'https://book-store-f-delta.vercel.app/',
       methods:['GET','POST','PUT','DELETE'],
       allowedHeaders:['Content-Type'],  
     })
