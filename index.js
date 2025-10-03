@@ -83,12 +83,29 @@ app.get("/health", (req, res) => {
 // Routes
 app.use("/books", bookRoute);
 
-// Connect to DB
-mongoose
-  .connect(mongoDBURL)
+// Serverless-friendly Mongo connection cache
+let cached = global.mongoose;
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
+async function connectToDatabase() {
+  if (cached.conn) return cached.conn;
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(mongoDBURL, {
+      // options can be added here if needed
+    }).then((mongooseInstance) => {
+      return mongooseInstance;
+    });
+  }
+  cached.conn = await cached.promise;
+  return cached.conn;
+}
+
+// Ensure connection initialized at cold start
+connectToDatabase()
   .then(() => {
     console.log("App connected to DB");
-    // Only start a listener in non-Vercel environments
     if (process.env.VERCEL !== "1") {
       app.listen(PORT, () => {
         console.log(`App started successfully on port ${PORT}`);
@@ -96,7 +113,7 @@ mongoose
     }
   })
   .catch((error) => {
-    console.error(error);
+    console.error("Mongo connection error:", error);
   });
 
 // Export the app for Vercel serverless
