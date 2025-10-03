@@ -63,8 +63,7 @@ app.use(
   })
 );
 
-// Preflight (important for POST/PUT/DELETE)
-app.options("*", cors());
+// Preflight requests are handled by the CORS middleware above
 
 // Default route
 app.get("/", (req, res) => {
