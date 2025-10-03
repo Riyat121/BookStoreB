@@ -2,27 +2,32 @@ import express from "express";
 import { PORT, mongoDBURL } from "./config.js";
 import mongoose from "mongoose";
 import bookRoute from "./routes/bookRoute.js";
-import cors from 'cors';
+import cors from "cors";
+
 const app = express();
 
 // Middleware
 app.use(express.json());
 
-//middleware for handling cors policy 
+// CORS setup
 app.use(
-    cors({
-      origin:'https://book-store-f-delta.vercel.app/',
-      methods:['GET','POST','PUT','DELETE'],
-      allowedHeaders:['Content-Type'],  
-    })
-)
+  cors({
+    origin: "https://book-store-f-delta.vercel.app", // ✅ no slash
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type"],
+  })
+);
+
+// Preflight (important for POST/PUT/DELETE)
+app.options("*", cors());
 
 // Default route
 app.get("/", (req, res) => {
   return res.status(200).send("Welcome to MERN tutorial");
 });
 
-app.use('/books',bookRoute);
+// Routes
+app.use("/books", bookRoute);
 
 // Connect to DB and start server
 mongoose
