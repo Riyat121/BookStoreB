@@ -51,17 +51,23 @@ import cors from "cors";
 
 const app = express();
 
-// Middleware
-app.use(express.json());
+// //middleware
 
-// CORS setup
-app.use(
-  cors({
-    origin: "https://book-store-f-delta.vercel.app", // ✅ no slash
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type"],
-  })
-);
+app.use(server.json());
+
+//cors
+
+const cors = require('cors');
+
+app.use(cors({
+
+    origin: '*', // Allow all origins
+
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow specific methods
+
+    allowedHeaders: ['Content-Type', 'Authorization'] // Allow specific headers
+
+}));
 
 // Preflight (important for POST/PUT/DELETE)
 app.options("*", cors());
