@@ -51,23 +51,17 @@ import cors from "cors";
 
 const app = express();
 
-// //middleware
+// Middleware
+app.use(express.json());
 
-app.use(server.json());
-
-//cors
-
-const cors = require('cors');
-
-app.use(cors({
-
-    origin: '*', // Allow all origins
-
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow specific methods
-
-    allowedHeaders: ['Content-Type', 'Authorization'] // Allow specific headers
-
-}));
+// CORS
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 // Preflight (important for POST/PUT/DELETE)
 app.options("*", cors());
@@ -77,11 +71,11 @@ app.get("/", (req, res) => {
   return res.status(200).send("Welcome to MERN tutorial");
 });
 
-// ✅ Health-check route
+// Health-check route
 app.get("/health", (req, res) => {
   res.status(200).json({
     status: "ok",
-    message: "✅ Backend is running smoothly",
+    message: "Backend is running",
     timestamp: new Date().toISOString(),
   });
 });
@@ -89,15 +83,21 @@ app.get("/health", (req, res) => {
 // Routes
 app.use("/books", bookRoute);
 
-// Connect to DB and start server
+// Connect to DB
 mongoose
   .connect(mongoDBURL)
   .then(() => {
     console.log("App connected to DB");
-    app.listen(PORT, () => {
-      console.log(`App started successfully on port ${PORT}`);
-    });
+    // Only start a listener in non-Vercel environments
+    if (process.env.VERCEL !== "1") {
+      app.listen(PORT, () => {
+        console.log(`App started successfully on port ${PORT}`);
+      });
+    }
   })
   .catch((error) => {
-    console.log(error);
+    console.error(error);
   });
+
+// Export the app for Vercel serverless
+export default app;
