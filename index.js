@@ -116,5 +116,7 @@ connectToDatabase()
     console.error("Mongo connection error:", error);
   });
 
-// Export the app for Vercel serverless
-export default app;
+// Export a Vercel-compatible handler
+export default function handler(req, res) {
+  return app(req, res);
+}
