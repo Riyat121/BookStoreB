@@ -88,6 +88,16 @@ app.get("/health", async (req, res) => {
 });
 
 // Routes
+// Ensure DB is connected before handling any request (serverless-safe)
+app.use(async (req, res, next) => {
+  try {
+    await connectToDatabase();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.use("/books", bookRoute);
 
 // Serverless-friendly Mongo connection cache
