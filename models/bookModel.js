@@ -2,22 +2,11 @@ import mongoose from "mongoose";
 
 const bookSchema = new mongoose.Schema(
   {
-    title: {
-      type: String,
-      required: true,
-    },
-    author: {
-      type: String,
-      required: true,
-    },
-    publishYear: {
-      type: Number,
-      required: true,
-    },
+    title: { type: String, required: true },
+    author: { type: String, required: true },
+    publishYear: { type: Number, required: true },
   },
-  {
-    timestamps: true, // ✅ fixed typo
-  }
+  { timestamps: true } // correct spelling
 );
 
-export const Book = mongoose.model("Book", bookSchema); // ✅ keep as named export
+export const Book = mongoose.model("Book", bookSchema);
