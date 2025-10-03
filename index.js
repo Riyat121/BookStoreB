@@ -65,18 +65,26 @@ app.use(
 
 // Preflight requests are handled by the CORS middleware above
 
+// Favicon to avoid noise in logs
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+
 // Default route
 app.get("/", (req, res) => {
   return res.status(200).send("Welcome to MERN tutorial");
 });
 
-// Health-check route
-app.get("/health", (req, res) => {
-  res.status(200).json({
-    status: "ok",
-    message: "Backend is running",
-    timestamp: new Date().toISOString(),
-  });
+// Health-check route with DB status
+app.get("/health", async (req, res) => {
+  try {
+    const dbState = mongoose.connection.readyState; // 0=disconnected,1=connected,2=connecting,3=disconnecting
+    res.status(200).json({
+      status: "ok",
+      dbReadyState: dbState,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    res.status(500).json({ status: "error", message: err?.message || String(err) });
+  }
 });
 
 // Routes
