@@ -1,10 +1,11 @@
 import express from "express";
 import { Book } from "../models/bookModel.js";  // <-- if you used export default in model
+import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
 // Route to save new book 
-router.post("/", async (req, res) => {
+router.post("/", verifyToken, async (req, res) => {
   try {
     const { title, author, publishYear } = req.body;
 
@@ -48,7 +49,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Route to update a book
-router.put("/:id", async (req, res) => {
+router.put("/:id", verifyToken, async (req, res) => {
   try {
     const { title, author, publishYear } = req.body;
     if (!title || !author || !publishYear) {
@@ -70,7 +71,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // Route to delete a book
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
     const result = await Book.findByIdAndDelete(id);
